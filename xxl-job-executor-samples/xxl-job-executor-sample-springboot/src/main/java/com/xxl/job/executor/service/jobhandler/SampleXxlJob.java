@@ -123,6 +123,7 @@ public class SampleXxlJob {
      *      "url: http://www.baidu.com\n" +
      *      "method: get\n" +
      *      "data: content\n";
+     *      "readtimeout: int\n";
      */
     @XxlJob("httpJobHandler")
     public void httpJobHandler() throws Exception {
@@ -140,6 +141,7 @@ public class SampleXxlJob {
         String url = null;
         String method = null;
         String data = null;
+        int readtimeout = 5;
         for (String httpParam: httpParams) {
             if (httpParam.startsWith("url:")) {
                 url = httpParam.substring(httpParam.indexOf("url:") + 4).trim();
@@ -150,6 +152,14 @@ public class SampleXxlJob {
             if (httpParam.startsWith("data:")) {
                 data = httpParam.substring(httpParam.indexOf("data:") + 5).trim();
             }
+            if (httpParam.startsWith("readtimeout:")) {
+                try{
+                    readtimeout = Integer.parseInt(httpParam.substring(httpParam.indexOf("readtimeout:") + 12).trim());
+               }
+               catch (NumberFormatException ex){
+                  ex.printStackTrace();
+               }
+            }      
         }
 
         // param valid
@@ -180,7 +190,7 @@ public class SampleXxlJob {
             connection.setDoOutput(isPostMethod);
             connection.setDoInput(true);
             connection.setUseCaches(false);
-            connection.setReadTimeout(5 * 1000);
+            connection.setReadTimeout(readtimeout * 1000);
             connection.setConnectTimeout(3 * 1000);
             connection.setRequestProperty("connection", "Keep-Alive");
             connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
